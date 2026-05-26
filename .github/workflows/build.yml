@@ -33,9 +33,9 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: false
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            npm run build:win
+            npm run build:win -- --publish never
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            npm run build:mac
+            npm run build:mac -- --publish never
           fi
         shell: bash
         
