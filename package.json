@@ -1,0 +1,45 @@
+{
+  "name": "cpu-j",
+  "version": "1.0.0",
+  "description": "CPU-J — Diagnóstico de Hardware en Tiempo Real",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:all": "electron-builder --win --mac"
+  },
+  "author": "CPU-J",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "dependencies": {
+    "systeminformation": "^5.25.0"
+  },
+  "build": {
+    "appId": "com.cpuj.app",
+    "productName": "CPU-J",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.utilities"
+    },
+    "portable": {
+      "artifactName": "CPU-J-${version}-portable.${ext}"
+    }
+  }
+}

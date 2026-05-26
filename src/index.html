@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CPU-J</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="flex flex-col h-screen">
+
+  <!-- ── Titlebar ── -->
+  <header class="titlebar flex items-center justify-between px-3 shrink-0">
+    <div class="flex items-center gap-2">
+      <i data-lucide="cpu" class="w-4 h-4 neon-text-cyan"></i>
+      <span class="text-xs font-semibold tracking-wider neon-text-cyan">CPU-J</span>
+      <span class="text-[10px] text-gray-500 ml-2">PORTABLE EDITION</span>
+    </div>
+    <div class="flex">
+      <button id="btn-minimize" class="titlebar-btn w-8 h-8 flex items-center justify-center text-gray-400">
+        <i data-lucide="minus" class="w-3 h-3"></i>
+      </button>
+      <button id="btn-maximize" class="titlebar-btn w-8 h-8 flex items-center justify-center text-gray-400">
+        <i data-lucide="square" class="w-3 h-3"></i>
+      </button>
+      <button id="btn-close" class="titlebar-btn close w-8 h-8 flex items-center justify-center text-gray-400">
+        <i data-lucide="x" class="w-3 h-3"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Tab Navigation ── -->
+  <nav class="flex px-2 pt-2 bg-black/40 border-b border-gray-800 overflow-x-auto shrink-0 no-scrollbar">
+    <button class="tab-btn active px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white uppercase flex items-center gap-2" data-target="tab-cpu">
+      <i data-lucide="microchip" class="w-3 h-3"></i> CPU
+    </button>
+    <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white uppercase flex items-center gap-2" data-target="tab-caches">
+      <i data-lucide="layers" class="w-3 h-3"></i> Caches
+    </button>
+    <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white uppercase flex items-center gap-2" data-target="tab-mainboard">
+      <i data-lucide="server" class="w-3 h-3"></i> Mainboard
+    </button>
+    <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white uppercase flex items-center gap-2" data-target="tab-memory">
+      <i data-lucide="database" class="w-3 h-3"></i> Memory
+    </button>
+    <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white uppercase flex items-center gap-2" data-target="tab-spd">
+      <i data-lucide="memory-stick" class="w-3 h-3"></i> SPD
+    </button>
+    <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white uppercase flex items-center gap-2" data-target="tab-graphics">
+      <i data-lucide="monitor" class="w-3 h-3"></i> Graphics
+    </button>
+    <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white uppercase flex items-center gap-2" data-target="tab-bench">
+      <i data-lucide="zap" class="w-3 h-3"></i> Bench
+    </button>
+    <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white uppercase flex items-center gap-2" data-target="tab-about">
+      <i data-lucide="info" class="w-3 h-3"></i> About
+    </button>
+  </nav>
+
+  <!-- ── Main Content Area ── -->
+  <main class="flex-1 overflow-y-auto p-4 relative">
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="absolute inset-0 bg-[#06080f] z-50 flex flex-col items-center justify-center">
+      <i data-lucide="loader" class="w-8 h-8 neon-text-cyan animate-spin mb-4"></i>
+      <div class="text-sm font-mono text-gray-400">Escaneando hardware...</div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB: CPU -->
+    <!-- ============================================== -->
+    <div id="tab-cpu" class="tab-content active flex-col gap-4">
+      
+      <!-- Processor Group -->
+      <fieldset class="glass-panel rounded-lg p-4 neon-border relative pt-6">
+        <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400 flex items-center gap-2">
+           <i data-lucide="cpu" class="w-3 h-3 neon-text-cyan"></i> Procesador
+        </legend>
+        
+        <div class="data-grid mb-2">
+          <div class="data-label">Nombre</div>
+          <div id="cpu-brand" class="data-value neon-text-cyan font-bold">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Fabricante</div>
+          <div id="cpu-manufacturer" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Socket</div>
+          <div id="cpu-socket" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Voltaje del Núcleo</div>
+          <div id="cpu-voltage" class="data-value neon-text-magenta live-data">-</div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <div class="data-grid" style="grid-template-columns: 80px 1fr">
+            <div class="data-label">Familia</div>
+            <div id="cpu-family" class="data-value">-</div>
+          </div>
+          <div class="data-grid" style="grid-template-columns: 80px 1fr">
+            <div class="data-label">Modelo</div>
+            <div id="cpu-model" class="data-value">-</div>
+          </div>
+          <div class="data-grid" style="grid-template-columns: 80px 1fr">
+            <div class="data-label">Stepping</div>
+            <div id="cpu-stepping" class="data-value">-</div>
+          </div>
+          <div class="data-grid" style="grid-template-columns: 80px 1fr">
+            <div class="data-label">Rev.</div>
+            <div id="cpu-revision" class="data-value">-</div>
+          </div>
+        </div>
+        
+        <div class="data-grid mt-4">
+          <div class="data-label">Instrucciones</div>
+          <div id="cpu-flags" class="data-value text-[10px] break-words whitespace-normal">-</div>
+        </div>
+      </fieldset>
+
+      <!-- Clocks & Cache Group -->
+      <div class="grid grid-cols-2 gap-4">
+        <fieldset class="glass-panel rounded-lg p-4 relative pt-6">
+          <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400">Relojes (Core #0)</legend>
+          <div class="data-grid mb-2" style="grid-template-columns: 90px 1fr">
+            <div class="data-label">Core Speed</div>
+            <div id="cpu-corespeed" class="data-value neon-text-cyan font-bold live-data">-</div>
+          </div>
+          <div class="data-grid mb-2" style="grid-template-columns: 90px 1fr">
+            <div class="data-label">Base Speed</div>
+            <div id="cpu-basespeed" class="data-value">-</div>
+          </div>
+          <div class="data-grid" style="grid-template-columns: 90px 1fr">
+            <div class="data-label">Min/Max</div>
+            <div id="cpu-minmax" class="data-value">-</div>
+          </div>
+        </fieldset>
+        
+        <fieldset class="glass-panel rounded-lg p-4 relative pt-6">
+          <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400">Temp & Cores</legend>
+          <div class="data-grid mb-2" style="grid-template-columns: 90px 1fr">
+            <div class="data-label">Temperatura</div>
+            <div id="cpu-temp" class="data-value neon-text-green font-bold live-data">-</div>
+          </div>
+          <div class="data-grid mb-2" style="grid-template-columns: 90px 1fr">
+            <div class="data-label">Cores Fís.</div>
+            <div id="cpu-physical" class="data-value">-</div>
+          </div>
+          <div class="data-grid" style="grid-template-columns: 90px 1fr">
+            <div class="data-label">Threads</div>
+            <div id="cpu-threads" class="data-value neon-text-magenta">-</div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB: CACHES -->
+    <!-- ============================================== -->
+    <div id="tab-caches" class="tab-content flex-col gap-4">
+      <fieldset class="glass-panel rounded-lg p-4 relative pt-6 h-full">
+        <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400 flex items-center gap-2">
+           <i data-lucide="layers" class="w-3 h-3 neon-text-cyan"></i> Memoria Caché
+        </legend>
+        
+        <div class="data-grid mb-4">
+          <div class="data-label">L1 Data</div>
+          <div id="cache-l1d" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-4">
+          <div class="data-label">L1 Inst.</div>
+          <div id="cache-l1i" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-4">
+          <div class="data-label">Level 2</div>
+          <div id="cache-l2" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-4">
+          <div class="data-label">Level 3</div>
+          <div id="cache-l3" class="data-value">-</div>
+        </div>
+      </fieldset>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB: MAINBOARD -->
+    <!-- ============================================== -->
+    <div id="tab-mainboard" class="tab-content flex-col gap-4">
+      <fieldset class="glass-panel rounded-lg p-4 relative pt-6">
+        <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400 flex items-center gap-2">
+           <i data-lucide="server" class="w-3 h-3 neon-text-cyan"></i> Placa Base
+        </legend>
+        <div class="data-grid mb-2">
+          <div class="data-label">Fabricante</div>
+          <div id="mb-manuf" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Modelo</div>
+          <div id="mb-model" class="data-value neon-text-cyan font-bold">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Versión</div>
+          <div id="mb-version" class="data-value">-</div>
+        </div>
+        <div class="data-grid">
+          <div class="data-label">Chipset (Chassis)</div>
+          <div id="mb-chipset" class="data-value">-</div>
+        </div>
+      </fieldset>
+
+      <fieldset class="glass-panel rounded-lg p-4 relative pt-6">
+        <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400">BIOS</legend>
+        <div class="data-grid mb-2">
+          <div class="data-label">Vendor</div>
+          <div id="bios-vendor" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Versión</div>
+          <div id="bios-version" class="data-value">-</div>
+        </div>
+        <div class="data-grid">
+          <div class="data-label">Fecha</div>
+          <div id="bios-date" class="data-value">-</div>
+        </div>
+      </fieldset>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB: MEMORY -->
+    <!-- ============================================== -->
+    <div id="tab-memory" class="tab-content flex-col gap-4">
+      <fieldset class="glass-panel rounded-lg p-4 relative pt-6">
+        <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400 flex items-center gap-2">
+           <i data-lucide="database" class="w-3 h-3 neon-text-cyan"></i> General
+        </legend>
+        <div class="data-grid mb-2">
+          <div class="data-label">Tipo</div>
+          <div id="mem-type" class="data-value neon-text-magenta font-bold">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Tamaño</div>
+          <div id="mem-size" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Canales</div>
+          <div id="mem-channels" class="data-value">-</div>
+        </div>
+      </fieldset>
+
+      <fieldset class="glass-panel rounded-lg p-4 relative pt-6">
+        <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400">Uso Actual</legend>
+        <div class="data-grid mb-2">
+          <div class="data-label">Usada</div>
+          <div id="mem-used" class="data-value live-data">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Disponible</div>
+          <div id="mem-free" class="data-value live-data">-</div>
+        </div>
+        <div class="data-grid">
+          <div class="data-label">Swap (Usado/Total)</div>
+          <div id="mem-swap" class="data-value">-</div>
+        </div>
+      </fieldset>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB: SPD -->
+    <!-- ============================================== -->
+    <div id="tab-spd" class="tab-content flex-col gap-4">
+      <div class="flex items-center gap-4 mb-2">
+        <label class="text-xs font-semibold text-gray-400">Slot Selection</label>
+        <select id="spd-selector" class="flex-1">
+          <!-- Filled dynamically -->
+        </select>
+      </div>
+
+      <fieldset class="glass-panel rounded-lg p-4 relative pt-6">
+        <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400 flex items-center gap-2">
+           <i data-lucide="memory-stick" class="w-3 h-3 neon-text-cyan"></i> Module Specs
+        </legend>
+        <div class="data-grid mb-2">
+          <div class="data-label">Fabricante</div>
+          <div id="spd-manuf" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Part Number</div>
+          <div id="spd-part" class="data-value font-bold neon-text-cyan">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Tamaño</div>
+          <div id="spd-size" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Velocidad</div>
+          <div id="spd-speed" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Tipo</div>
+          <div id="spd-type" class="data-value">-</div>
+        </div>
+        <div class="data-grid">
+          <div class="data-label">Voltaje Conf.</div>
+          <div id="spd-volt" class="data-value">-</div>
+        </div>
+      </fieldset>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB: GRAPHICS -->
+    <!-- ============================================== -->
+    <div id="tab-graphics" class="tab-content flex-col gap-4">
+      <div class="flex items-center gap-4 mb-2">
+        <label class="text-xs font-semibold text-gray-400">Display Device Selection</label>
+        <select id="gpu-selector" class="flex-1">
+          <!-- Filled dynamically -->
+        </select>
+      </div>
+
+      <fieldset class="glass-panel rounded-lg p-4 relative pt-6">
+        <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400 flex items-center gap-2">
+           <i data-lucide="monitor" class="w-3 h-3 neon-text-cyan"></i> GPU
+        </legend>
+        <div class="data-grid mb-2">
+          <div class="data-label">Nombre</div>
+          <div id="gpu-name" class="data-value neon-text-green font-bold">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Fabricante</div>
+          <div id="gpu-vendor" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">VRAM</div>
+          <div id="gpu-vram" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Driver Version</div>
+          <div id="gpu-driver" class="data-value">-</div>
+        </div>
+        <div class="data-grid">
+          <div class="data-label">Bus Interface</div>
+          <div id="gpu-bus" class="data-value">-</div>
+        </div>
+      </fieldset>
+
+      <fieldset id="gpu-display-panel" class="glass-panel rounded-lg p-4 relative pt-6">
+        <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400">Display</legend>
+        <div class="data-grid mb-2">
+          <div class="data-label">Resolución</div>
+          <div id="gpu-res" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Refresh Rate</div>
+          <div id="gpu-refresh" class="data-value">-</div>
+        </div>
+        <div class="data-grid">
+          <div class="data-label">Conexión</div>
+          <div id="gpu-conn" class="data-value">-</div>
+        </div>
+      </fieldset>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB: BENCH -->
+    <!-- ============================================== -->
+    <div id="tab-bench" class="tab-content flex-col gap-4">
+      <fieldset class="glass-panel rounded-lg p-4 neon-border relative pt-6">
+        <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400 flex items-center gap-2">
+           <i data-lucide="zap" class="w-3 h-3 neon-text-cyan"></i> Rendimiento CPU
+        </legend>
+        
+        <div class="flex gap-4 mb-4">
+          <button id="btn-bench" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-4 border border-gray-600 rounded shadow-md transition-all uppercase text-xs tracking-wider">
+            Correr Benchmark
+          </button>
+          <button id="btn-bench-stop" class="bg-red-900/50 hover:bg-red-800 text-white font-semibold py-2 px-4 border border-red-700/50 rounded shadow-md transition-all uppercase text-xs tracking-wider opacity-50 cursor-not-allowed" disabled>
+            Detener
+          </button>
+        </div>
+
+        <!-- Progress -->
+        <div class="mb-4">
+          <div class="flex justify-between text-xs text-gray-400 mb-1">
+            <span>Progreso</span>
+            <span id="bench-pct">0%</span>
+          </div>
+          <div class="progress-bar-bg h-2">
+            <div id="bench-progress" class="progress-bar-fill h-full w-0"></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-black/40 p-3 rounded border border-gray-800">
+            <div class="text-[10px] text-gray-500 uppercase">CPU Single Thread</div>
+            <div id="bench-single" class="text-xl font-mono mt-1 text-gray-300">-</div>
+          </div>
+          <div class="bg-black/40 p-3 rounded border border-gray-800">
+            <div class="text-[10px] text-gray-500 uppercase">CPU Multi Thread (<span id="bench-threads">-</span>T)</div>
+            <div id="bench-multi" class="text-xl font-mono mt-1 text-gray-300">-</div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="glass-panel rounded-lg p-4 relative pt-6">
+        <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400">Referencia</legend>
+        <div class="space-y-3">
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-gray-400">Intel Core i9-13900K</span>
+              <span class="font-mono neon-text-magenta">~ 18500</span>
+            </div>
+            <div class="h-1 bg-gray-800 rounded overflow-hidden">
+              <div class="h-full bg-gray-600" style="width: 100%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-gray-400">Apple M2 Max</span>
+              <span class="font-mono neon-text-magenta">~ 14200</span>
+            </div>
+            <div class="h-1 bg-gray-800 rounded overflow-hidden">
+              <div class="h-full bg-gray-600" style="width: 76%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-gray-400">Tu Sistema</span>
+              <span id="bench-ref-score" class="font-mono neon-text-cyan">-</span>
+            </div>
+            <div class="h-1 bg-gray-800 rounded overflow-hidden">
+              <div id="bench-ref-bar" class="h-full bg-cyan-400 transition-all duration-500" style="width: 0%; box-shadow: 0 0 8px cyan"></div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB: ABOUT -->
+    <!-- ============================================== -->
+    <div id="tab-about" class="tab-content flex-col gap-4">
+      <div class="flex flex-col items-center justify-center p-6 glass-panel rounded-lg">
+        <i data-lucide="cpu" class="w-16 h-16 neon-text-cyan mb-4"></i>
+        <h1 class="text-2xl font-bold tracking-widest">CPU-J</h1>
+        <p class="text-sm text-gray-400 mb-2">Versión Portable 1.0.0 (Primera Versión)</p>
+        <p class="text-xs text-gray-500 mb-6 italic">Creado en conjunto por Julián y Antigravity</p>
+        
+        <button id="btn-export" class="bg-cyan-900/40 hover:bg-cyan-800/60 text-cyan-400 font-semibold py-2 px-6 border border-cyan-700/50 rounded shadow-md transition-all flex items-center gap-2">
+          <i data-lucide="download" class="w-4 h-4"></i> Exportar Reporte (.txt)
+        </button>
+      </div>
+
+      <fieldset class="glass-panel rounded-lg p-4 relative pt-6">
+        <legend class="absolute -top-3 left-4 bg-[#06080f] px-2 text-xs font-semibold text-gray-400">Sistema Operativo</legend>
+        <div class="data-grid mb-2">
+          <div class="data-label">Plataforma</div>
+          <div id="os-platform" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Kernel</div>
+          <div id="os-kernel" class="data-value">-</div>
+        </div>
+        <div class="data-grid mb-2">
+          <div class="data-label">Arquitectura</div>
+          <div id="os-arch" class="data-value">-</div>
+        </div>
+        <div class="data-grid">
+          <div class="data-label">Hostname</div>
+          <div id="os-host" class="data-value">-</div>
+        </div>
+      </fieldset>
+    </div>
+
+  </main>
+
+  <script src="renderer.js"></script>
+  <script>
+    // Iniciar Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>
