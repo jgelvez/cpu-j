@@ -34,7 +34,7 @@ Todo está empaquetado en un diseño de cristal oscuro de primera calidad (**Neo
 
 ### Opción 1: Descargar las versiones precompiladas (Recomendado)
 
-Ve a la pestaña de **[Releases](https://github.com/jgelvez/cpu-j/releases/tag/v1.0.2)** en este repositorio y descarga el archivo correspondiente a tu sistema operativo:
+Ve a la pestaña de **[Releases](https://github.com/jgelvez/cpu-j/releases/tag/v1.0.3)** en este repositorio y descarga el archivo correspondiente a tu sistema operativo:
 
 *   🍎 **Para Mac:** Descarga el archivo `CPU-J-1.0.0-arm64.dmg` (o x64), haz doble clic y arrástralo a la carpeta Aplicaciones, o ábrelo directamente.
 *   🪟 **Para Windows:** Descarga el archivo `CPU-J-1.0.0-portable.exe` y haz doble clic para ejecutarlo. ¡No requiere instalación!
