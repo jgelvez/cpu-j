@@ -5,9 +5,9 @@
   
   **La evolución moderna de CPU-Z, reimaginada con tecnologías web y un impresionante diseño Cyberpunk.**
   
-  [![Versión](https://img.shields.io/badge/Versión-1.0.0-00e5ff?style=for-the-badge)](https://github.com/juliangelvez/CPU-J)
+  [![Versión](https://img.shields.io/badge/Versión-1.1.0-00e5ff?style=for-the-badge)](https://github.com/jgelvez/cpu-j)
   [![Plataformas](https://img.shields.io/badge/Plataformas-Windows%20%7C%20macOS-ff2d7b?style=for-the-badge)](#)
-  [![Autor](https://img.shields.io/badge/Creado_por-Julián_&_IA-00ff88?style=for-the-badge)](#)
+  [![Autor](https://img.shields.io/badge/Creado_por-Julián_Gelvez_&_Antigravity-00ff88?style=for-the-badge)](#)
 
   *Primera versión construida colaborativamente.*
 </div>
@@ -34,10 +34,10 @@ Todo está empaquetado en un diseño de cristal oscuro de primera calidad (**Neo
 
 ### Opción 1: Descargar las versiones precompiladas (Recomendado)
 
-Ve a la pestaña de **[Releases](https://github.com/jgelvez/cpu-j/releases/tag/v1.0.3)** en este repositorio y descarga el archivo correspondiente a tu sistema operativo:
+Ve a la pestaña de **[Releases](https://github.com/jgelvez/cpu-j/releases/tag/v1.1.0)** en este repositorio y descarga el archivo correspondiente a tu sistema operativo:
 
-*   🍎 **Para Mac:** Descarga el archivo `CPU-J-1.0.0-arm64.dmg` (o x64), haz doble clic y arrástralo a la carpeta Aplicaciones, o ábrelo directamente.
-*   🪟 **Para Windows:** Descarga el archivo `CPU-J-1.0.0-portable.exe` y haz doble clic para ejecutarlo. ¡No requiere instalación!
+*   🍎 **Para Mac:** Descarga el archivo `CPU-J-1.1.0-arm64.dmg` (o x64), haz doble clic y arrástralo a la carpeta Aplicaciones, o ábrelo directamente.
+*   🪟 **Para Windows:** Descarga el archivo `CPU-J-1.1.0-portable.exe` y haz doble clic para ejecutarlo. ¡No requiere instalación!
 
 ### Opción 2: Ejecutar en entorno de desarrollo
 
@@ -68,5 +68,5 @@ Si deseas ejecutar el código fuente o modificar la interfaz, puedes hacerlo usa
 
 ## 👥 Créditos
 
-Esta es la **Primera Versión (v1.0.0)**.
-Construido de cero, mano a mano y de manera conjunta entre **Julián** y la inteligencia artificial **Antigravity**.
+Esta es la **Versión 1.1.0**.
+Construido de cero, mano a mano y de manera conjunta entre **Julián Gelvez** y la inteligencia artificial **Antigravity**.
