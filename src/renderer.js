@@ -7,6 +7,7 @@ let hwData = null;
 let updateInterval = null;
 let benchWorkers = [];
 let isBenchmarking = false;
+let singleBenchScore = 0;
 
 // Formatters
 const fmtMB = (bytes) => (bytes / (1024 * 1024)).toFixed(0) + ' MB';
@@ -202,7 +203,10 @@ async function updateRealtimeData() {
   
   updateLiveText('cpu-temp', temp.main > 0 ? temp.main + ' °C' : '-');
   
-  updateLiveText('mem-used', fmtGB(mem.used));
+  // mem.used en macOS incluye caché y memoria comprimida, lo cual es confuso.
+  // Usamos total - available que refleja el uso real (como el Monitor de Actividad).
+  const realUsed = mem.total - mem.available;
+  updateLiveText('mem-used', fmtGB(realUsed));
   updateLiveText('mem-free', fmtGB(mem.available));
   setText('mem-swap', `${fmtMB(mem.swapused)} / ${fmtMB(mem.swaptotal)}`);
 }
@@ -237,8 +241,10 @@ function startBenchmark() {
   document.getElementById('bench-multi').textContent = 'Esperando...';
   document.getElementById('bench-progress').style.width = '0%';
   document.getElementById('bench-pct').textContent = '0%';
-  document.getElementById('bench-ref-score').textContent = '-';
-  document.getElementById('bench-ref-bar').style.width = '0%';
+  document.getElementById('bench-ref-single-score').textContent = '-';
+  document.getElementById('bench-ref-single-bar').style.width = '0%';
+  document.getElementById('bench-ref-multi-score').textContent = '-';
+  document.getElementById('bench-ref-multi-bar').style.width = '0%';
 
   const limit = 2000000; // Workload
   
@@ -250,6 +256,7 @@ function startBenchmark() {
       document.getElementById('bench-progress').style.width = (e.data.percent / 2) + '%';
       document.getElementById('bench-pct').textContent = Math.round(e.data.percent / 2) + '%';
     } else if (e.data.type === 'result') {
+      singleBenchScore = e.data.score;
       document.getElementById('bench-single').textContent = e.data.score;
       document.getElementById('bench-single').classList.add('neon-text-cyan');
       singleWorker.terminate();
@@ -291,7 +298,7 @@ function runMultiThreadBench(limit) {
       }
     };
     
-    w.postMessage({ type: 'start', limit: limit / Math.sqrt(cores), id: `multi-${i}` });
+    w.postMessage({ type: 'start', limit: limit, id: `multi-${i}` });
   }
 }
 
@@ -310,12 +317,20 @@ function finishBenchmark(multiScore) {
   document.getElementById('btn-bench-stop').disabled = true;
   document.getElementById('btn-bench-stop').classList.add('opacity-50', 'cursor-not-allowed');
   
-  // Update Reference Chart
-  const ref13900k = 18500;
-  document.getElementById('bench-ref-score').textContent = multiScore;
-  let pct = (multiScore / ref13900k) * 100;
-  if(pct > 100) pct = 100;
-  document.getElementById('bench-ref-bar').style.width = pct + '%';
+  // Update Single Thread Reference Chart
+  const refSingle13900k = 1850;
+  document.getElementById('bench-ref-single-score').textContent = singleBenchScore;
+  let singlePct = (singleBenchScore / refSingle13900k) * 100;
+  if (singlePct > 100) singlePct = 100;
+  document.getElementById('bench-ref-single-bar').style.width = singlePct + '%';
+  
+  // Update Multi Thread Reference Chart
+  const refMulti13900k = 30000;
+  document.getElementById('bench-ref-multi-score').textContent = multiScore;
+  document.getElementById('bench-ref-threads').textContent = hwData.cpu.cores;
+  let multiPct = (multiScore / refMulti13900k) * 100;
+  if (multiPct > 100) multiPct = 100;
+  document.getElementById('bench-ref-multi-bar').style.width = multiPct + '%';
 }
 
 function stopBenchmark() {

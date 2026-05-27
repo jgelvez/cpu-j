@@ -33,7 +33,7 @@ self.onmessage = function (e) {
     }
 
     const elapsed = performance.now() - startTime;
-    const score = Math.round((count / elapsed) * 10000);
+    const score = Math.round(count / elapsed);
 
     self.postMessage({
       type: 'result',
